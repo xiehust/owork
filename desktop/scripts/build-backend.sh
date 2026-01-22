@@ -102,8 +102,15 @@ cd "$BUILD_DIR"
 
 # Create virtual environment and install dependencies
 echo "Setting up Python environment..."
-python3 -m venv .venv
-source .venv/bin/activate
+
+# Use python3 on Unix, python on Windows
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    python -m venv .venv
+    source .venv/Scripts/activate
+else
+    python3 -m venv .venv
+    source .venv/bin/activate
+fi
 
 # Install dependencies
 pip install --upgrade pip
