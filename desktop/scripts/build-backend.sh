@@ -113,9 +113,16 @@ else
 fi
 
 # Install dependencies
-pip install --upgrade pip
-pip install pyinstaller
-pip install -e .
+# Use python -m pip on Windows to avoid pip self-upgrade issues
+if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]; then
+    python -m pip install --upgrade pip
+    python -m pip install pyinstaller
+    python -m pip install -e .
+else
+    pip install --upgrade pip
+    pip install pyinstaller
+    pip install -e .
+fi
 
 # Create PyInstaller spec file for better control
 cat > backend.spec << EOF
