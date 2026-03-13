@@ -358,24 +358,24 @@ export default function ChatPage() {
       setPendingQuestion(null);
 
       // Show a message indicating the context change
-      if (selectedAgent) {
-        const contextMessage = workDir
-          ? `Working directory changed to: ${workDir}`
-          : 'Working directory cleared';
-        setMessages([
-          {
-            id: Date.now().toString(),
-            role: 'assistant',
-            content: [
-              {
-                type: 'text',
-                text: `${contextMessage}\n\nHello, I'm ${selectedAgent.name}. ${selectedAgent.description || 'How can I assist you today?'}`,
-              },
-            ],
-            timestamp: new Date().toISOString(),
-          },
-        ]);
-      }
+      // if (selectedAgent) {
+      //   const contextMessage = workDir
+      //     ? `Working directory changed to: ${workDir}`
+      //     : 'Working directory cleared';
+      //   setMessages([
+      //     {
+      //       id: Date.now().toString(),
+      //       role: 'assistant',
+      //       content: [
+      //         {
+      //           type: 'text',
+      //           text: `${contextMessage}\n\nHello, I'm ${selectedAgent.name}. ${selectedAgent.description || 'How can I assist you today?'}`,
+      //         },
+      //       ],
+      //       timestamp: new Date().toISOString(),
+      //     },
+      //   ]);
+      // }
     } else {
       prevWorkDirRef.current = workDir;
     }
@@ -406,19 +406,19 @@ export default function ChatPage() {
     setPendingQuestion(null);
     if (selectedAgent) {
       // Add welcome message
-      setMessages([
-        {
-          id: '1',
-          role: 'assistant',
-          content: [
-            {
-              type: 'text',
-              text: `Hello, I'm ${selectedAgent.name}. ${selectedAgent.description || 'How can I assist you today?'}`,
-            },
-          ],
-          timestamp: new Date().toISOString(),
-        },
-      ]);
+      // setMessages([
+      //   {
+      //     id: '1',
+      //     role: 'assistant',
+      //     content: [
+      //       {
+      //         type: 'text',
+      //         text: `Hello, I'm ${selectedAgent.name}. ${selectedAgent.description || 'How can I assist you today?'}`,
+      //       },
+      //     ],
+      //     timestamp: new Date().toISOString(),
+      //   },
+      // ]);
     }
     // Collapse sidebar after creating new chat
     setChatSidebarCollapsed(true);
@@ -447,19 +447,19 @@ export default function ChatPage() {
       if (agent && selectedAgentId !== agentIdFromUrl) {
         setSelectedAgentId(agentIdFromUrl);
         // Initialize chat with welcome message
-        setMessages([
-          {
-            id: '1',
-            role: 'assistant',
-            content: [
-              {
-                type: 'text',
-                text: `Hello, I'm ${agent.name}. ${agent.description || 'How can I assist you today?'}`,
-              },
-            ],
-            timestamp: new Date().toISOString(),
-          },
-        ]);
+        // setMessages([
+        //   {
+        //     id: '1',
+        //     role: 'assistant',
+        //     content: [
+        //       {
+        //         type: 'text',
+        //         text: `Hello, I'm ${agent.name}. ${agent.description || 'How can I assist you today?'}`,
+        //       },
+        //     ],
+        //     timestamp: new Date().toISOString(),
+        //   },
+        // ]);
         setSessionId(undefined);
         // Clear the URL parameter after processing
         setSearchParams({});
@@ -477,19 +477,19 @@ export default function ChatPage() {
         if (existingAgent) {
           setSelectedAgentId(lastId);
           // Show welcome message for restored agent
-          setMessages([
-            {
-              id: '1',
-              role: 'assistant',
-              content: [
-                {
-                  type: 'text',
-                  text: `Hello, I'm ${existingAgent.name}. ${existingAgent.description || 'How can I assist you today?'}`,
-                },
-              ],
-              timestamp: new Date().toISOString(),
-            },
-          ]);
+          // setMessages([
+          //   {
+          //     id: '1',
+          //     role: 'assistant',
+          //     content: [
+          //       {
+          //         type: 'text',
+          //         text: `Hello, I'm ${existingAgent.name}. ${existingAgent.description || 'How can I assist you today?'}`,
+          //       },
+          //     ],
+          //     timestamp: new Date().toISOString(),
+          //   },
+          // ]);
         } else {
           // Agent was deleted, clear localStorage
           localStorage.removeItem('lastSelectedAgentId');
@@ -1436,19 +1436,19 @@ export default function ChatPage() {
 
     setSelectedAgentId(agentId);
     // Reset chat state when switching agents
-    setMessages([
-      {
-        id: '1',
-        role: 'assistant',
-        content: [
-          {
-            type: 'text',
-            text: `Hello, I'm ${agent.name}. ${agent.description || 'How can I assist you today?'}`,
-          },
-        ],
-        timestamp: new Date().toISOString(),
-      },
-    ]);
+    // setMessages([
+    //   {
+    //     id: '1',
+    //     role: 'assistant',
+    //     content: [
+    //       {
+    //         type: 'text',
+    //         text: `Hello, I'm ${agent.name}. ${agent.description || 'How can I assist you today?'}`,
+    //       },
+    //     ],
+    //     timestamp: new Date().toISOString(),
+    //   },
+    // ]);
     setSessionId(undefined);
     // Collapse sidebar after selecting agent
     setChatSidebarCollapsed(true);

@@ -26,7 +26,7 @@ from claude_agent_sdk import (
 )
 
 from database import db
-from config import settings, get_bedrock_model_id
+from config import settings, resolve_model_id
 from .session_manager import session_manager
 from .system_prompt import SystemPromptBuilder
 from .workspace_manager import workspace_manager
@@ -960,13 +960,13 @@ class AgentManager:
         # Determine permission mode
         permission_mode = agent_config.get("permission_mode", "bypassPermissions")
 
-        # Get model from config and convert to Bedrock model ID if using Bedrock
+        # Resolve display name (e.g. "Fast Model") to actual model ID
         # Check runtime env var (set by _configure_claude_environment) rather than static settings
         model = agent_config.get("model")
         use_bedrock = os.environ.get("CLAUDE_CODE_USE_BEDROCK", "").lower() == "true"
-        if model and use_bedrock:
-            model = get_bedrock_model_id(model)
-            logger.info(f"Using Bedrock model: {model}")
+        if model:
+            model = resolve_model_id(model, use_bedrock=use_bedrock)
+            logger.info(f"Resolved model: {model} (bedrock={use_bedrock})")
         
         def stderr_callback(input):
             logger.error(input)

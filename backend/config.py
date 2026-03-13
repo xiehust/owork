@@ -21,29 +21,30 @@ def get_app_data_dir() -> Path:
     else:
         return Path.home() / ".local" / "share" / "owork"
 
-# Model ID mapping: Anthropic API model ID -> AWS Bedrock model ID
-# Used when CLAUDE_CODE_USE_BEDROCK=true
-ANTHROPIC_TO_BEDROCK_MODEL_MAP: dict[str, str] = {
-    # Claude 4.5 models
-    "claude-haiku-4-5-20251001": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
-    "claude-sonnet-4-5-20250929": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-    "claude-opus-4-5-20251101": "global.anthropic.claude-opus-4-5-20251101-v1:0",
-    # Claude 4.6 models
-    "claude-sonnet-4-6": "global.anthropic.claude-sonnet-4-6",
-    "claude-opus-4-6": "global.anthropic.claude-opus-4-6-v1",
+# Model mapping: display name -> (Anthropic API model ID, AWS Bedrock model ID)
+MODEL_MAP: dict[str, tuple[str, str]] = {
+    "Fast Model": ("claude-sonnet-4-6", "global.anthropic.claude-sonnet-4-6"),
+    "Strong Model": ("claude-opus-4-6", "global.anthropic.claude-opus-4-6-v1"),
 }
 
+# Keys used as available model list in settings
+ANTHROPIC_TO_BEDROCK_MODEL_MAP = MODEL_MAP
 
-def get_bedrock_model_id(anthropic_model_id: str) -> str:
-    """Convert Anthropic model ID to AWS Bedrock model ID.
+
+def resolve_model_id(display_name: str, use_bedrock: bool = False) -> str:
+    """Resolve a display name to the actual model ID for the SDK.
 
     Args:
-        anthropic_model_id: The Anthropic API model identifier
+        display_name: The display name (e.g. "Fast Model") or raw model ID
+        use_bedrock: If True, return the Bedrock model ID; otherwise the Anthropic API ID
 
     Returns:
-        The corresponding AWS Bedrock model identifier, or the original ID if no mapping exists
+        The resolved model ID, or the original string if no mapping exists
     """
-    return ANTHROPIC_TO_BEDROCK_MODEL_MAP.get(anthropic_model_id, anthropic_model_id)
+    entry = MODEL_MAP.get(display_name)
+    if entry:
+        return entry[1] if use_bedrock else entry[0]
+    return display_name
 
 
 class Settings(BaseSettings):
@@ -84,7 +85,7 @@ class Settings(BaseSettings):
     # Claude Agent SDK / Anthropic API Configuration
     anthropic_api_key: str = ""
     anthropic_base_url: str | None = None  # Custom API endpoint (optional)
-    default_model: str = "claude-sonnet-4-5-20250929"
+    default_model: str = "Fast Model"
 
     # Claude Code Configuration
     claude_code_use_bedrock: bool = True  # Use AWS Bedrock instead of Anthropic API
