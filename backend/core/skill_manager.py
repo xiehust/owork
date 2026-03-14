@@ -47,21 +47,25 @@ class SkillManager:
         """Ensure local skills directory exists."""
         self.local_dir.mkdir(parents=True, exist_ok=True)
 
-    def scan_local_skills(self) -> dict[str, Path]:
-        """Scan local skills directory and return dict of skill_name -> path."""
-        self._ensure_local_dir()
+    def scan_local_skills(self, scan_dir: Path | None = None) -> dict[str, Path]:
+        """Scan a skills directory and return dict of skill_name -> path.
+
+        Args:
+            scan_dir: Directory to scan. Defaults to workspace/.claude/skills/
+        """
+        target_dir = scan_dir or self.local_dir
+        target_dir.mkdir(parents=True, exist_ok=True)
         skills = {}
 
-        for item in self.local_dir.iterdir():
+        for item in target_dir.iterdir():
             if item.is_dir() and not item.name.startswith('.'):
                 # Check if it has SKILL.md (valid skill directory)
-                skill_md = item / "SKILL.md"
-                if skill_md.exists():
+                if (item / "SKILL.md").exists():
                     skills[item.name] = item
                 else:
                     logger.warning(f"Skipping directory without SKILL.md: {item.name}")
 
-        logger.info(f"Found {len(skills)} local skills: {list(skills.keys())}")
+        logger.info(f"Found {len(skills)} skills in {target_dir}: {list(skills.keys())}")
         return skills
 
     def extract_skill_metadata(self, skill_dir: Path) -> SkillMetadata:
@@ -248,8 +252,17 @@ class SkillManager:
         result = SyncResult()
         skills_to_add = []
 
-        # Scan local skills
+        # Scan workspace skills
         local_skills = self.scan_local_skills()
+
+        # Also scan ~/.claude/skills/ for home-directory skills
+        home_skills_dir = Path.home() / ".claude" / "skills"
+        if home_skills_dir.exists():
+            home_skills = self.scan_local_skills(home_skills_dir)
+            # Merge: workspace skills take precedence over home skills
+            for name, path in home_skills.items():
+                if name not in local_skills:
+                    local_skills[name] = path
 
         # Build DB skill maps by folder name
         db_skill_map = {}
